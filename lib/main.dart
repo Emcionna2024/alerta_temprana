@@ -3,6 +3,14 @@ import 'pantallas/contenedor_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Inicializa Firebase nativo
+  // Inicializar FCM (pasando el ID del usuario logueado, por ejemplo, alumno o docente ID = 1)
+  await FcmService.inicializar(
+    userIdLogueado: 1, 
+    onMensajeRecibido: (message) {
+      // Lógica opcional cuando se interactúa con el aviso
+    },
+  );
   runApp(const EduQuestAusenciasApp());
 }
 
