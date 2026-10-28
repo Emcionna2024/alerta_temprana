@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart'; 
+import 'servicios/fcm_service.dart'; // 2. Asegúrate de que esta ruta coincida con la ubicación de tu servicio FCM
 import 'pantallas/contenedor_screen.dart';
+import 'firebase_options.dart'; // El archivo generado por la herramienta que importas correctamente
+import 'pantallas/login_screen.dart';
 
-void main() {
+void main() async {
+  // Asegura que se inicialicen los bindings antes de arrancar
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Inicializa Firebase nativo
+  
+  // Inicializa Firebase usando las opciones automáticas para cada plataforma
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  ); 
+
   // Inicializar FCM (pasando el ID del usuario logueado, por ejemplo, alumno o docente ID = 1)
-  await FcmService.inicializar(
-    userIdLogueado: 1, 
-    onMensajeRecibido: (message) {
-      // Lógica opcional cuando se interactúa con el aviso
-    },
-  );
+  // Aquí puedes llamar a tu servicio una vez que Firebase esté listo:
+  // await FcmService.inicializar(usuarioId: 1); 
+
   runApp(const EduQuestAusenciasApp());
 }
 
@@ -25,7 +32,6 @@ class EduQuestAusenciasApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        // Fondo base idéntico a la web
         scaffoldBackgroundColor: const Color(0xFF0A0F1D),
         
         colorScheme: const ColorScheme.dark(
@@ -35,7 +41,6 @@ class EduQuestAusenciasApp extends StatelessWidget {
           error: Color(0xFFEF4444),
         ),
 
-        // Barra superior limpia y oscura
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF0A0F1D),
           foregroundColor: Colors.white,
@@ -49,7 +54,6 @@ class EduQuestAusenciasApp extends StatelessWidget {
           ),
         ),
 
-        // Estilo de los campos de texto y dropdowns
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: const Color(0xFF132238),
@@ -70,7 +74,8 @@ class EduQuestAusenciasApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const ContenedorScreen(),
-    );
+      // En tu main.dart:
+      home: LoginScreen(),
+      );
   }
 }

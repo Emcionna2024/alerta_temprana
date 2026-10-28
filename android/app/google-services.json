@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "168638303360",
+    "project_id": "eduquest-alerta-temprana",
+    "storage_bucket": "eduquest-alerta-temprana.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168638303360:android:7f9ed19d30d67a70f2ea65",
+        "android_client_info": {
+          "package_name": "com.example.alerta_temprana"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7D7wPcZjnq8hH4MUHMZYxrwUslbqbXus"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
