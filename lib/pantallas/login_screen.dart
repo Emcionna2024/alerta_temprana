@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../servicios/auth_service.dart';
 import 'contenedor_screen.dart';
 import 'register_screen.dart'; // Importaremos la pantalla de registro que crearemos a continuación
+import 'estudiante_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -41,9 +42,29 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (result['success']) {
+      final userData = result['user'];
+      
+      // Verificamos si tiene perfil de estudiante o de docente basándonos en los datos del backend
+      final bool isStudent = userData['studentProfile'] != null || 
+                             (userData['roles'] != null && (userData['roles'] as List).contains('STUDENT'));
+      
+      final bool isTeacher = userData['teacherProfile'] != null || 
+                             (userData['roles'] != null && (userData['roles'] as List).contains('TEACHER'));
+
+      // Definimos la pantalla de destino según su rol
+      Widget targetScreen;
+      
+      if (isStudent && !isTeacher) {
+        // Pantalla exclusiva para el estudiante (solo lectura de avisos)
+        targetScreen = const EstudianteScreen(); // Reemplazá con el nombre de tu pantalla de alumno
+      } else {
+        // Pantalla para docente / preceptor / administrador
+        targetScreen = const ContenedorScreen(); // Tu pantalla actual de gestión/docente
+      }
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const ContenedorScreen()),
+        MaterialPageRoute(builder: (context) => targetScreen),
       );
     } else {
       setState(() {
@@ -51,7 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
