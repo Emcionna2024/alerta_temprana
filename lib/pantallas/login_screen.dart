@@ -3,6 +3,8 @@ import '../servicios/auth_service.dart';
 import 'contenedor_screen.dart';
 import 'register_screen.dart'; // Importaremos la pantalla de registro que crearemos a continuación
 import 'estudiante_screen.dart';
+import 'docente_emision_screen.dart';
+import '../servicios/fcm_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -43,7 +45,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (result['success']) {
       final userData = result['user'];
-      
+      final tokenJwt = result['token']; // Asegurate de que tu AuthService devuelva también el 'token' en el mapa result 
+      // 2. INICIALIZAR FCM Y REGISTRAR EL DISPOSITIVO
+    try {
+      await FcmService.inicializar(
+      userIdLogueado: userData['id'],
+      tokenJwt: tokenJwt, // Opcional si tu ruta /api/devices requiere header Authorization
+      onMensajeRecibido: (message) {
+        // Manejo opcional cuando llega un mensaje con la app abierta
+        print('Notificación en primer plano: ${message.notification?.title}');
+              },
+           );
+        } catch (e) {
+                       print('Error al inicializar FCM tras el login: $e');
+                    }
       // Verificamos si tiene perfil de estudiante o de docente basándonos en los datos del backend
       final bool isStudent = userData['studentProfile'] != null || 
                              (userData['roles'] != null && (userData['roles'] as List).contains('STUDENT'));
@@ -54,12 +69,22 @@ class _LoginScreenState extends State<LoginScreen> {
       // Definimos la pantalla de destino según su rol
       Widget targetScreen;
       
-      if (isStudent && !isTeacher) {
+     if (isStudent && !isTeacher) {
         // Pantalla exclusiva para el estudiante (solo lectura de avisos)
-        targetScreen = const EstudianteScreen(); // Reemplazá con el nombre de tu pantalla de alumno
+        targetScreen = EstudianteScreen(
+        usuarioLogueado: userData, // Dependiendo de cómo guardes el mapa del usuario logueado en el login
+        tokenJwt: tokenJwt,      // El token recibido de la API
+        );
+      } else if (isTeacher) {
+        // Pantalla exclusiva para el docente (emisión e historial propio)
+        targetScreen = ContenedorScreen(
+          usuarioLogueado: userData, 
+          tokenJwt: tokenJwt,
+        );
       } else {
-        // Pantalla para docente / preceptor / administrador
-        targetScreen = const ContenedorScreen(); // Tu pantalla actual de gestión/docente
+        // Pantalla para administradores o preceptores generales
+        targetScreen = ContenedorScreen(usuarioLogueado: userData, tokenJwt: tokenJwt,); // <--- Le pasamos el userData aquí
+        
       }
 
       Navigator.pushReplacement(

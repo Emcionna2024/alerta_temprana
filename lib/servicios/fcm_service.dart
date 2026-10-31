@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http; // <--- 1. Importar http
+import 'package:http/http.dart' as http;
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -18,7 +18,8 @@ class FcmService {
       FlutterLocalNotificationsPlugin();
 
   static Future<void> inicializar({
-    required int userIdLogueado, // <--- 2. Recibir el ID del usuario actual
+    required int userIdLogueado,
+    required String tokenJwt, // <--- 1. Recibimos el JWT aquí también
     required Function(RemoteMessage) onMensajeRecibido,
   }) async {
     await _messaging.requestPermission(alert: true, badge: true, sound: true);
@@ -78,33 +79,43 @@ class FcmService {
     });
 
     // 4. Obtener el Token FCM y enviarlo al backend de Neon/Prisma
-    String? token = await _messaging.getToken();
+    String? token;
+    if (kIsWeb) {
+      token = await _messaging.getToken(
+        vapidKey: 'BBaTJkZGCkE4S4gfgHf8EtRC3bZB78wOWEpHupTN1TFm8kWECokGvzG-QlalWDiTQeEN4izQgbybbqE20AUm_gg',
+      );
+    } else {
+      token = await _messaging.getToken();
+    }
+    
     if (token != null) {
       log('Token FCM obtenido: $token');
-      await _enviarTokenAlBackend(userIdLogueado, token);
+      await _enviarTokenAlBackend(userIdLogueado, token, tokenJwt); // <--- 2. Pasamos el tokenJwt aquí
     }
 
     // Escuchar si el token se refresca automáticamente
     _messaging.onTokenRefresh.listen((newToken) {
-      _enviarTokenAlBackend(userIdLogueado, newToken);
+      _enviarTokenAlBackend(userIdLogueado, newToken, tokenJwt); // <--- 3. Y también aquí
     });
   }
 
-  //5. Método privado para sincronizar el token adaptándose al dispositivo (Web o Android)
-  static Future<void> _enviarTokenAlBackend(int userId, String token) async {
+  // 5. Método privado para sincronizar el token adaptándose al dispositivo (Web o Android)
+  static Future<void> _enviarTokenAlBackend(int userId, String token, String tokenJwt) async {
     try {
-      final url = Uri.parse('http://localhost:3000/api/devices'); // Reemplazá por tu URL de API
+      final url = Uri.parse('http://localhost:3000/api/devices');
       
-      // Detectamos de forma segura si corre en Web o en Dispositivo Móvil
       final String plataformaDetectada = kIsWeb ? 'flutter_web' : 'flutter_android';
 
       await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tokenJwt',
+        },
         body: jsonEncode({
           'userId': userId,
           'token': token,
-          'platform': plataformaDetectada, // <--- Envía dinámicamente 'flutter_web' o 'flutter_android'
+          'platform': plataformaDetectada,
         }),
       );
       log('Token FCM ($plataformaDetectada) registrado exitosamente en la base de datos.');

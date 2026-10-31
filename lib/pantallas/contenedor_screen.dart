@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'docente_emision_screen.dart';
 import 'docente_historial_screen.dart';
+import 'docente_gestion_screen.dart';
 import 'estudiante_screen.dart';
 
 class ContenedorScreen extends StatefulWidget {
-  const ContenedorScreen({super.key});
+  final Map<String, dynamic> usuarioLogueado;
+  final String? tokenJwt;
+
+  const ContenedorScreen({
+    super.key, 
+    required this.usuarioLogueado, 
+    this.tokenJwt,
+  });
 
   @override
   State<ContenedorScreen> createState() => _ContenedorScreenState();
@@ -13,17 +21,94 @@ class ContenedorScreen extends StatefulWidget {
 class _ContenedorScreenState extends State<ContenedorScreen> {
   int _indiceActual = 0;
 
+  final GlobalKey<State<DocenteHistorialScreen>> _historialKey = GlobalKey<State<DocenteHistorialScreen>>();
+
   @override
   Widget build(BuildContext context) {
-    final pantallas = [
-      DocenteEmisionScreen(
-        onAvisoPublicado: () {
-          setState(() {});
-        },
-      ),
-      const DocenteHistorialScreen(),
-      const EstudianteScreen(),
-    ];
+    final userData = widget.usuarioLogueado;
+    
+    final bool isStudent = userData['studentProfile'] != null || 
+                           (userData['roles'] != null && (userData['roles'] as List).contains('STUDENT'));
+    
+    final bool isTeacher = userData['teacherProfile'] != null || 
+                           (userData['roles'] != null && (userData['roles'] as List).contains('TEACHER'));
+
+    final bool isAdminOrDirector = (userData['roles'] != null && 
+        ((userData['roles'] as List).contains('ADMIN') || 
+         (userData['roles'] as List).contains('DIRECTOR') || 
+         (userData['roles'] as List).contains('PRECEPTOR')));
+
+    final List<Widget> pantallas;
+    final List<NavigationDestination> destinos;
+
+    if (isTeacher && !isAdminOrDirector) {
+      pantallas = [
+        DocenteEmisionScreen(
+          onAvisoPublicado: () {
+            setState(() => _indiceActual = 1);
+            
+            final historialState = _historialKey.currentState;
+            if (historialState != null) {
+              (historialState as dynamic).cargarHistorialExterno();
+            }
+          },
+          usuarioLogueado: widget.usuarioLogueado,
+          tokenJwt: widget.tokenJwt,    
+        ),
+        DocenteHistorialScreen(
+          key: _historialKey, 
+          usuarioLogueado: widget.usuarioLogueado,
+          tokenJwt: widget.tokenJwt,
+        ),
+        DocenteGestionScreen(
+          usuarioLogueado: widget.usuarioLogueado,
+          tokenJwt: widget.tokenJwt,
+        ),
+      ];
+
+      destinos = const [
+        NavigationDestination(
+          icon: Icon(Icons.edit_calendar_outlined),
+          selectedIcon: Icon(Icons.edit_calendar),
+          label: 'Emitir Aviso',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.history_outlined),
+          selectedIcon: Icon(Icons.history),
+          label: 'Historial',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.edit_note_outlined),
+          selectedIcon: Icon(Icons.edit_note),
+          label: 'Editar Aviso Emitido', // 👈 Texto corregido con mayúsculas
+        ),
+      ];
+    } else if (isAdminOrDirector) {
+      pantallas = [
+        DocenteHistorialScreen(
+          key: _historialKey,
+          usuarioLogueado: widget.usuarioLogueado,
+          tokenJwt: widget.tokenJwt,
+        ),
+      ];
+
+      destinos = const [
+        NavigationDestination(
+          icon: Icon(Icons.admin_panel_settings_outlined),
+          selectedIcon: Icon(Icons.admin_panel_settings),
+          label: 'Monitoreo Global',
+        ),
+      ];
+    } else {
+      return EstudianteScreen(
+        usuarioLogueado: widget.usuarioLogueado, 
+        tokenJwt: widget.tokenJwt,
+      );
+    }
+
+    if (_indiceActual >= pantallas.length) {
+      _indiceActual = 0;
+    }
 
     return Scaffold(
       body: pantallas[_indiceActual],
@@ -56,23 +141,7 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
           child: NavigationBar(
             selectedIndex: _indiceActual,
             onDestinationSelected: (index) => setState(() => _indiceActual = index),
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.edit_calendar_outlined),
-                selectedIcon: Icon(Icons.edit_calendar),
-                label: 'Emitir Aviso',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.history_outlined),
-                selectedIcon: Icon(Icons.history),
-                label: 'Historial',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.school_outlined),
-                selectedIcon: Icon(Icons.school),
-                label: 'Alumnos',
-              ),
-            ],
+            destinations: destinos,
           ),
         ),
       ),
