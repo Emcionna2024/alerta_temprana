@@ -28,8 +28,8 @@ class _DocenteGestionScreenState extends State<DocenteGestionScreen> {
 
   Future<void> _cargarAvisos() async {
     try {
-      final teacherId = widget.usuarioLogueado['teacherProfile']?['id'] ?? widget.usuarioLogueado['id'];
-      final url = Uri.parse('http://localhost:3000/api/early-notices?teacherId=$teacherId');
+      // 🌐 Consultamos directo al endpoint general validado por el Token JWT (igual que la web)
+      final url = Uri.parse('http://localhost:3000/api/early-notices');
 
       final response = await http.get(
         url,
@@ -40,16 +40,28 @@ class _DocenteGestionScreenState extends State<DocenteGestionScreen> {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final decodedBody = jsonDecode(response.body);
+        
+        // Parseo universal robusto para capturar los avisos sin importar el formato del backend
+        List<dynamic> listaTemporal = [];
+        if (decodedBody is List) {
+          listaTemporal = decodedBody;
+        } else if (decodedBody is Map) {
+          listaTemporal = decodedBody['notices'] ?? 
+                          decodedBody['data'] ?? 
+                          decodedBody['data']?['data'] ?? 
+                          [];
+        }
+
         setState(() {
-          avisos = data is List ? data : (data['notices'] ?? data['data'] ?? []);
+          avisos = listaTemporal;
           _isLoading = false;
         });
       } else {
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      print('Error cargando avisos para editar: $e');
+      print('Error cargando avisos para gestionar: $e');
       setState(() => _isLoading = false);
     }
   }

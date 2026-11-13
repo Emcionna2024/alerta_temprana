@@ -87,6 +87,19 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
     return item != null ? (item['course']?['nombre'] ?? '') : '';
   }
 
+  // 🛡️ Conversor robusto para traducir el texto del día a número (1=Lunes ... 7=Domingo)
+  int? _obtenerWeekdayDesdeTexto(String diaTexto) {
+    final normalizado = diaTexto.toLowerCase().trim();
+    if (normalizado.contains('lunes') || normalizado.contains('monday')) return DateTime.monday;
+    if (normalizado.contains('martes') || normalizado.contains('tuesday')) return DateTime.tuesday;
+    if (normalizado.contains('miér') || normalizado.contains('mier') || normalizado.contains('wednesday')) return DateTime.wednesday;
+    if (normalizado.contains('jueves') || normalizado.contains('thursday')) return DateTime.thursday;
+    if (normalizado.contains('viernes') || normalizado.contains('friday')) return DateTime.friday;
+    if (normalizado.contains('sáb') || normalizado.contains('sab') || normalizado.contains('saturday')) return DateTime.saturday;
+    if (normalizado.contains('domingo') || normalizado.contains('sunday')) return DateTime.sunday;
+    return null;
+  }
+
   String _generarTextoMensaje() {
     if (selectedSubjectId == null ||
         selectedCourseId == null ||
@@ -140,7 +153,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
           'courseId': selectedCourseId,          
           'scheduleId': selectedScheduleId,      
           'estimatedArrivalTime': selectedType == 'LATE_ARRIVAL' && selectedArrivalTime != null
-           ? '${selectedArrivalTime!.hour.toString().padLeft(2, '0')}:${selectedArrivalTime!.minute.toString().padLeft(2, '0')}'
+           ? '${selectedArrivalTime!.hour.toString().padLeft(2, '0')}:${selectedArrivalTime!.minute.toString().padLeft(2, '0管理局'.substring(0, 5))}' // formato seguro HH:mm
            : null,
         }),
       );
@@ -289,6 +302,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
             ),
             const SizedBox(height: 14),
 
+            // 1. Dropdown de Materia y Curso
             DropdownButtonFormField<int>(
               dropdownColor: const Color(0xFF132238),
               decoration: const InputDecoration(
@@ -321,11 +335,15 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                     horariosDisponiblesParaAsignacion = [];
                   }
                   selectedScheduleId = null; 
+                  selectedDate = null;
+                  selectedTime = null;
+                  selectedArrivalTime = null;
                 });
               },
             ),
             const SizedBox(height: 14),
 
+            // 2. Dropdown de Bloque Horario / Día de Cátedra
             DropdownButtonFormField<int>(
               dropdownColor: const Color(0xFF132238),
               decoration: const InputDecoration(
@@ -349,15 +367,75 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                   if (schSeleccionado != null) {
                     final partesHora = (schSeleccionado['startTime'] ?? '08:00').split(':');
                     selectedTime = TimeOfDay(hour: int.parse(partesHora[0]), minute: int.parse(partesHora[1]));
-                    selectedDate = DateTime.now(); 
+                    selectedDate = null; 
                   }
                 });
               },
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 14),
 
+            // 3. Botón Calendario Seguro (Abre fluido en Web y Móvil, y valida el día de la cátedra al seleccionar)
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: const Color(0xFF132238),
+                side: BorderSide(
+                  color: selectedScheduleId != null ? const Color(0xFF00D2A0) : const Color(0xFF1E293B),
+                  width: 1.5,
+                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              ),
+              onPressed: selectedScheduleId == null ? null : () async {
+                final schSeleccionado = horariosDisponiblesParaAsignacion.firstWhere(
+                  (s) => s['id'] == selectedScheduleId,
+                  orElse: () => null,
+                );
+
+                final diaCatedra = schSeleccionado?['day'] ?? 'clase';
+                final int? targetWeekday = _obtenerWeekdayDesdeTexto(diaCatedra);
+
+                // Calendario estándar fluido sin bloqueos de renderizado web
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(const Duration(days: 30)),
+                  lastDate: DateTime.now().add(const Duration(days: 60)),
+                  helpText: 'Seleccione fecha de clase ($diaCatedra)',
+                  confirmText: 'CONFIRMAR',
+                  cancelText: 'CANCELAR',
+                );
+
+                if (picked != null) {
+                  // 🛡️ Validación posterior post-selección para asegurar que sea el día correcto de la cátedra
+                  if (targetWeekday != null && picked.weekday != targetWeekday) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('La fecha seleccionada no corresponde a un día $diaCatedra. Por favor elija un día válido.'),
+                        backgroundColor: Colors.redAccent,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  } else {
+                    setState(() {
+                      selectedDate = picked;
+                    });
+                  }
+                }
+              },
+              icon: const Icon(Icons.calendar_month_outlined, size: 20, color: Color(0xFF00D2A0)),
+              label: Text(
+                selectedDate == null
+                    ? (selectedScheduleId == null 
+                        ? 'Primero seleccione un bloque horario' 
+                        : 'Seleccionar Fecha en el Calendario')
+                    : 'Fecha de clase: ${selectedDate!.day.toString().padLeft(2, '0')}/${selectedDate!.month.toString().padLeft(2, '0')}/${selectedDate!.year}',
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13.5),
+              ),
+            ),
+            const SizedBox(height: 14),
+
+            // 4. Selector de Hora para Llegada Tarde
             if (selectedType == 'LATE_ARRIVAL') ...[
-              const SizedBox(height: 14),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   backgroundColor: const Color(0xFF132238),
@@ -371,12 +449,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                     orElse: () => null,
                   );
 
-                  if (schSeleccionado == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Primero seleccione un bloque horario de cátedra')),
-                    );
-                    return;
-                  }
+                  if (schSeleccionado == null) return;
 
                   final partesInicio = (schSeleccionado['startTime'] ?? '08:00').split(':');
                   final partesFin = (schSeleccionado['endTime'] ?? '12:00').split(':');
@@ -392,11 +465,12 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                   if (picked != null) {
                     final int minSeleccionados = picked.hour * 60 + picked.minute;
 
-                    if (minSeleccionados <= minInicio || minSeleccionados >= minFin) {
+                    if (minSeleccionados < minInicio || minSeleccionados > minFin) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('La hora debe estar entre ${schSeleccionado['startTime']} y ${schSeleccionado['endTime']} hs'),
                           backgroundColor: Colors.redAccent,
+                          behavior: SnackBarBehavior.floating,
                         ),
                       );
                     } else {

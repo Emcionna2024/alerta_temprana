@@ -35,8 +35,9 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
 
   Future<void> _cargarHistorial() async {
     try {
-      final teacherId = widget.usuarioLogueado['teacherProfile']?['id'] ?? widget.usuarioLogueado['id'];
-      final url = Uri.parse('http://localhost:3000/api/early-notices?teacherId=$teacherId');
+      // 🌐 Llamamos directamente al endpoint general de avisos (igual que la web)
+      // El backend se encarga de filtrar los avisos del docente mediante el Token JWT.
+      final url = Uri.parse('http://localhost:3000/api/early-notices');
 
       final response = await http.get(
         url,
@@ -47,9 +48,21 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final decodedBody = jsonDecode(response.body);
+        
+        // Parseo universal adaptado a cualquier estructura que devuelva el backend
+        List<dynamic> listaTemporal = [];
+        if (decodedBody is List) {
+          listaTemporal = decodedBody;
+        } else if (decodedBody is Map) {
+          listaTemporal = decodedBody['notices'] ?? 
+                          decodedBody['data'] ?? 
+                          decodedBody['data']?['data'] ?? 
+                          [];
+        }
+
         setState(() {
-          avisosEmitidos = data is List ? data : (data['notices'] ?? data['data'] ?? []);
+          avisosEmitidos = listaTemporal;
           _isLoading = false;
         });
       } else {
@@ -204,7 +217,6 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
                                       'Docente: Prof. $docenteNombre $docenteApellido',
                                       style: const TextStyle(fontSize: 11, color: Colors.grey),
                                     ),
-                                    // Botón de eliminación / desactivación rápida
                                     TextButton.icon(
                                       onPressed: () => _desactivarAviso(avisoId),
                                       icon: const Icon(Icons.delete_outline, size: 16, color: Colors.redAccent),
