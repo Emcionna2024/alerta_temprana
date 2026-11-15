@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F1D),
+      backgroundColor: const Color(0xFFF8F9FA), // [MODIFICACIÓN]: Color neutral (#F8F9FA) para el fondo
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Icon(
                     Icons.school_rounded,
                     size: 64,
-                    color: Color(0xFF00D2A0),
+                    color: Color(0xFFF50E11), // [MODIFICACIÓN]: Color primario (#F50E11) para el ícono
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color(0xFF0F120F), // [MODIFICACIÓN]: Color secundario (#0F120F) para el título
                     ),
                   ),
                   const Text(
@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color(0xFF94A3B8),
+                      color: Color(0xFF64748B), // [MODIFICACIÓN]: Gris de apoyo legible sobre fondo claro
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -154,12 +154,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16),
                   ],
 
+                  // Usuario
                   TextFormField(
                     controller: _emailOrDniController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
+                    style: const TextStyle(color: Color(0xFF0F120F)), // Texto ingresado oscuro
+                    decoration: InputDecoration(
                       labelText: 'Correo electrónico o DNI',
-                      prefixIcon: Icon(Icons.person_outline),
+                      labelStyle: const TextStyle(color: Color(0xFF64748B)),
+                      prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Icono con color secundario
+                      filled: true,
+                      fillColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco para el input
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFF50E11), width: 1.5), // Borde activo primario (#F50E11)
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -173,21 +189,36 @@ class _LoginScreenState extends State<LoginScreen> {
                   // CAMPO CONTRASEÑA CON EL BOTÓN DEL "OJO"
                   TextFormField(
                     controller: _passwordController,
-                    obscureText: _obscurePassword, // Se enlaza al estado
-                    style: const TextStyle(color: Colors.white),
+                    obscureText: _obscurePassword,
+                    style: const TextStyle(color: Color(0xFF0F120F)), // Texto ingresado oscuro
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
-                      prefixIcon: const Icon(Icons.lock_outline),
+                      labelStyle: const TextStyle(color: Color(0xFF64748B)),
+                      prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Icono principal oscuro
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          color: const Color(0xFF94A3B8),
+                          color: const Color(0xFF64748B), // [MODIFICACIÓN]: Icono del ojo legible
                         ),
                         onPressed: () {
                           setState(() {
-                            _obscurePassword = !_obscurePassword; // Alterna estado
+                            _obscurePassword = !_obscurePassword;
                           });
                         },
+                      ),
+                      filled: true,
+                      fillColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco para el input
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFF50E11), width: 1.5), // Borde activo primario (#F50E11)
                       ),
                     ),
                     validator: (value) {
@@ -202,8 +233,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ElevatedButton(
                     onPressed: _isLoading ? null : _handleLogin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00D2A0),
-                      foregroundColor: const Color(0xFF0A0F1D),
+                      backgroundColor: const Color(0xFFF50E11), // [MODIFICACIÓN]: Color primario (#F50E11) para el botón
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -235,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       '¿No tenés cuenta? Registrate como estudiante',
-                      style: TextStyle(color: Color(0xFF38BDF8)),
+                      style: TextStyle(color: Color(0xFF0D6EFD)), // [MODIFICACIÓN]: Color terciario (#0D6EFD) para enlaces
                     ),
                   ),
                 ],

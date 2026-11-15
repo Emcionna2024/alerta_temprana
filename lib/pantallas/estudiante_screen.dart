@@ -58,7 +58,7 @@ class _EstudianteScreenState extends State<EstudianteScreen> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: const Text('Avisos para Alumnos'), centerTitle: true),
-        body: const Center(child: CircularProgressIndicator(color: Color(0xFF1565C0))),
+        body: const Center(child: CircularProgressIndicator(color: Color(0xFFF50E11))), // [MODIFICACIÓN]: Color primario (#F50E11)
       );
     }
 
@@ -80,7 +80,7 @@ class _EstudianteScreenState extends State<EstudianteScreen> {
           ? const Center(
               child: Text(
                 'No hay novedades de ausencias docentes activas.',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Color(0xFF64748B)), // [MODIFICACIÓN]: Texto auxiliar legible
               ),
             )
           : ListView.builder(
@@ -103,17 +103,17 @@ class _EstudianteScreenState extends State<EstudianteScreen> {
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 4.0),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.white, // [MODIFICACIÓN]: Fondo blanco para tarjeta
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: const Color(0xFF1E88E5).withOpacity(0.4),
+                      color: const Color(0xFFCBD5E1), // [MODIFICACIÓN]: Borde neutral claro (#CBD5E1)
                       width: 1.2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF1565C0).withOpacity(0.12),
-                        offset: const Offset(0, 6),
-                        blurRadius: 14,
+                        color: const Color(0xFF0F120F).withOpacity(0.04), // [MODIFICACIÓN]: Sombra sutil
+                        offset: const Offset(0, 4),
+                        blurRadius: 10,
                         spreadRadius: 0,
                       ),
                     ],
@@ -131,16 +131,16 @@ class _EstudianteScreenState extends State<EstudianteScreen> {
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
-                                color: Color(0xFF0D47A1),
+                                color: Color(0xFF0F120F), // [MODIFICACIÓN]: Texto oscuro principal (#0F120F)
                               ),
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE3F2FD).withOpacity(0.9),
+                                color: const Color(0xFFF50E11).withOpacity(0.15), // [MODIFICACIÓN]: Primario suave
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: const Color(0xFF90CAF9),
+                                  color: const Color(0xFFF50E11).withOpacity(0.3), // [MODIFICACIÓN]: Borde primario sutil
                                   width: 0.8,
                                 ),
                               ),
@@ -150,7 +150,7 @@ class _EstudianteScreenState extends State<EstudianteScreen> {
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1565C0),
+                                  color: Color(0xFFF50E11), // [MODIFICACIÓN]: Texto primario (#F50E11)
                                 ),
                               ),
                             ),
@@ -158,23 +158,23 @@ class _EstudianteScreenState extends State<EstudianteScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '$docente • $curso ($tipoAviso)',
-                          style: TextStyle(
-                            color: Colors.blueGrey.shade700,
+                          '$docente\n$curso ($tipoAviso)',
+                          style: const TextStyle(
+                            color: Color(0xFF64748B), // [MODIFICACIÓN]: Texto secundario legible (#64748B)
                             fontWeight: FontWeight.w500,
                             fontSize: 13,
                           ),
                         ),
                         Divider(
                           height: 24,
-                          color: const Color(0xFF0D47A1).withOpacity(0.1),
+                          color: const Color(0xFFCBD5E1), // [MODIFICACIÓN]: Divisor claro (#CBD5E1)
                         ),
                         Text(
                           mensaje,
                           style: const TextStyle(
                             fontSize: 14,
                             height: 1.4,
-                            color: Color(0xFF263238),
+                            color: Color(0xFF0F120F), // [MODIFICACIÓN]: Texto oscuro legible
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -182,14 +182,14 @@ class _EstudianteScreenState extends State<EstudianteScreen> {
                           alignment: Alignment.centerRight,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
+                            children: const [
                               Icon(Icons.check_circle_rounded,
-                                  color: Colors.teal.shade600, size: 22),
-                              const SizedBox(width: 6),
+                                  color: Color(0xFFF50E11), size: 22), // [MODIFICACIÓN]: Ícono primario (#F50E11)
+                              SizedBox(width: 6),
                               Text(
                                 'Aviso Institucional Activo',
                                 style: TextStyle(
-                                  color: Colors.teal.shade700,
+                                  color: Color(0xFF0F120F), // [MODIFICACIÓN]: Texto principal oscuro
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),

@@ -35,8 +35,7 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
 
   Future<void> _cargarHistorial() async {
     try {
-      // 🌐 Llamamos directamente al endpoint general de avisos (igual que la web)
-      // El backend se encarga de filtrar los avisos del docente mediante el Token JWT.
+      // Llamamos directamente al endpoint general de avisos
       final url = Uri.parse('http://localhost:3000/api/early-notices');
 
       final response = await http.get(
@@ -50,7 +49,6 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
       if (response.statusCode == 200) {
         final decodedBody = jsonDecode(response.body);
         
-        // Parseo universal adaptado a cualquier estructura que devuelva el backend
         List<dynamic> listaTemporal = [];
         if (decodedBody is List) {
           listaTemporal = decodedBody;
@@ -79,16 +77,16 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF132238),
-        title: const Text('Desactivar aviso', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco para diálogo
+        title: const Text('Desactivar aviso', style: TextStyle(color: Color(0xFF0F120F), fontWeight: FontWeight.bold)), // [MODIFICACIÓN]: Texto oscuro
         content: const Text(
           '¿Estás seguro de dar de baja este aviso temprano?', 
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Color(0xFF64748B)), // [MODIFICACIÓN]: Texto secundario legible
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+            child: const Text('Cancelar', style: TextStyle(color: Color(0xFF64748B))), // [MODIFICACIÓN]: Color neutral
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
@@ -113,7 +111,7 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
       if (response.statusCode == 200 || response.statusCode == 204) {
         _cargarHistorial(); // Refrescamos la lista
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Aviso desactivado correctamente'), backgroundColor: Color(0xFF00D2A0)),
+          const SnackBar(content: Text('Aviso desactivado correctamente'), backgroundColor: Color(0xFFF50E11)), // [MODIFICACIÓN]: Color primario (#F50E11)
         );
       } else {
         throw Exception('No se pudo desactivar el aviso');
@@ -133,9 +131,9 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF00D2A0)))
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFFF50E11))) // [MODIFICACIÓN]: Indicador primario (#F50E11)
           : RefreshIndicator(
-              color: const Color(0xFF00D2A0),
+              color: const Color(0xFFF50E11), // [MODIFICACIÓN]: Color primario (#F50E11)
               onRefresh: _cargarHistorial,
               child: avisosEmitidos.isEmpty
                   ? ListView(
@@ -144,7 +142,7 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
                         Center(
                           child: Text(
                             'Aún no has emitido ninguna alerta de ausencia.',
-                            style: TextStyle(color: Colors.grey),
+                            style: TextStyle(color: Color(0xFF64748B)), // [MODIFICACIÓN]: Texto legible
                           ),
                         ),
                       ],
@@ -163,12 +161,12 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
                         final docenteApellido = widget.usuarioLogueado['lastName'] ?? '';
 
                         return Card(
-                          color: const Color(0xFF132238),
+                          color: Colors.white, // [MODIFICACIÓN]: Fondo blanco para tarjeta
                           margin: const EdgeInsets.symmetric(vertical: 6.0),
-                          elevation: 1,
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(color: Color(0xFF1E293B)),
+                            side: const BorderSide(color: Color(0xFFCBD5E1)), // [MODIFICACIÓN]: Borde claro neutral
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(14.0),
@@ -180,18 +178,18 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
                                   children: [
                                     Text(
                                       materia,
-                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro legible
                                     ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF00D2A0).withOpacity(0.15),
+                                        color: const Color(0xFFF50E11).withOpacity(0.15), // [MODIFICACIÓN]: Primario suave
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
                                         curso,
                                         style: const TextStyle(
-                                          color: Color(0xFF00D2A0),
+                                          color: Color(0xFFF50E11), // [MODIFICACIÓN]: Texto primario (#F50E11)
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -202,12 +200,12 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
                                 const SizedBox(height: 6),
                                 Text(
                                   'Fecha de clase: $fecha',
-                                  style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                                  style: const TextStyle(color: Color(0xFF64748B), fontSize: 13), // [MODIFICACIÓN]: Texto secundario legible
                                 ),
-                                const Divider(height: 18, color: Color(0xFF1E293B)),
+                                const Divider(height: 18, color: Color(0xFFCBD5E1)), // [MODIFICACIÓN]: Divisor claro
                                 Text(
                                   mensaje,
-                                  style: const TextStyle(fontSize: 13, color: Colors.white70),
+                                  style: const TextStyle(fontSize: 13, color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro de motivo
                                 ),
                                 const SizedBox(height: 12),
                                 Row(
@@ -215,7 +213,7 @@ class _DocenteHistorialScreenState extends State<DocenteHistorialScreen> {
                                   children: [
                                     Text(
                                       'Docente: Prof. $docenteNombre $docenteApellido',
-                                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)), // [MODIFICACIÓN]: Texto auxiliar legible
                                     ),
                                     TextButton.icon(
                                       onPressed: () => _desactivarAviso(avisoId),

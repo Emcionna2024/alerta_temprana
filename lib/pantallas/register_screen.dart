@@ -64,10 +64,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F1D),
+      backgroundColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco para modo claro
       appBar: AppBar(
-        title: const Text('Registro de Estudiante'),
-        backgroundColor: const Color(0xFF0A0F1D),
+        title: const Text(
+          'Registro de Estudiante',
+          style: TextStyle(color: Color(0xFF0F120F), fontWeight: FontWeight.bold), // [MODIFICACIÓN]: Texto oscuro legible
+        ),
+        backgroundColor: Colors.white, // [MODIFICACIÓN]: AppBar blanco
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Ícono de retroceso oscuro
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -84,7 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color(0xFF0F120F), // [MODIFICACIÓN]: Texto principal oscuro (#0F120F)
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -107,43 +112,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF00D2A0).withOpacity(0.1),
-                        border: Border.all(color: const Color(0xFF00D2A0)),
+                        color: const Color(0xFFF50E11).withOpacity(0.1), // [MODIFICACIÓN]: Éxito con primario suave
+                        border: Border.all(color: const Color(0xFFF50E11)), // [MODIFICACIÓN]: Borde primario (#F50E11)
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text(_successMessage!, style: const TextStyle(color: Color(0xFF00D2A0)), textAlign: TextAlign.center),
+                      child: Text(_successMessage!, style: const TextStyle(color: Color(0xFFF50E11)), textAlign: TextAlign.center), // [MODIFICACIÓN]: Texto primario
                     ),
                     const SizedBox(height: 16),
                   ],
 
                   TextFormField(
                     controller: _firstNameController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(labelText: 'Nombre', prefixIcon: Icon(Icons.badge_outlined)),
+                    style: const TextStyle(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre',
+                      prefixIcon: Icon(Icons.badge_outlined, color: Color(0xFF64748B)),
+                    ),
                     validator: (v) => v!.isEmpty ? 'Requerido' : null,
                   ),
                   const SizedBox(height: 16),
 
                   TextFormField(
                     controller: _lastNameController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(labelText: 'Apellido', prefixIcon: Icon(Icons.badge_outlined)),
+                    style: const TextStyle(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro
+                    decoration: const InputDecoration(
+                      labelText: 'Apellido',
+                      prefixIcon: Icon(Icons.badge_outlined, color: Color(0xFF64748B)),
+                    ),
                     validator: (v) => v!.isEmpty ? 'Requerido' : null,
                   ),
                   const SizedBox(height: 16),
 
                   TextFormField(
                     controller: _dniController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(labelText: 'DNI', prefixIcon: Icon(Icons.badge)),
+                    style: const TextStyle(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro
+                    decoration: const InputDecoration(
+                      labelText: 'DNI',
+                      prefixIcon: Icon(Icons.badge, color: Color(0xFF64748B)),
+                    ),
                     validator: (v) => v!.isEmpty ? 'Requerido' : null,
                   ),
                   const SizedBox(height: 16),
 
                   TextFormField(
                     controller: _emailController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(labelText: 'Correo electrónico', prefixIcon: Icon(Icons.email_outlined)),
+                    style: const TextStyle(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro
+                    decoration: const InputDecoration(
+                      labelText: 'Correo electrónico',
+                      prefixIcon: Icon(Icons.email_outlined, color: Color(0xFF64748B)),
+                    ),
                     validator: (v) => v!.isEmpty ? 'Requerido' : null,
                   ),
                   const SizedBox(height: 16),
@@ -151,12 +168,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
-                      prefixIcon: const Icon(Icons.lock_outline),
+                      prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF64748B)),
                       suffixIcon: IconButton(
-                        icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF94A3B8)),
+                        icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF64748B)),
                         onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                       ),
                     ),
@@ -170,7 +187,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: TextFormField(
                           controller: _institutionIdController,
                           keyboardType: TextInputType.number,
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro
                           decoration: const InputDecoration(labelText: 'ID Institución'),
                           validator: (v) => v!.isEmpty ? 'Requerido' : null,
                         ),
@@ -180,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: TextFormField(
                           controller: _courseIdController,
                           keyboardType: TextInputType.number,
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto oscuro
                           decoration: const InputDecoration(labelText: 'ID Curso'),
                           validator: (v) => v!.isEmpty ? 'Requerido' : null,
                         ),
@@ -192,13 +209,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ElevatedButton(
                     onPressed: _isLoading ? null : _handleRegister,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00D2A0),
-                      foregroundColor: const Color(0xFF0A0F1D),
+                      backgroundColor: const Color(0xFFF50E11), // [MODIFICACIÓN]: Fondo primario institucional (#F50E11)
+                      foregroundColor: Colors.white, // [MODIFICACIÓN]: Texto blanco
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     child: _isLoading
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                         : const Text('Registrarse', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ],

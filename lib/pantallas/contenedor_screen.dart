@@ -80,7 +80,7 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
         NavigationDestination(
           icon: Icon(Icons.edit_note_outlined),
           selectedIcon: Icon(Icons.edit_note),
-          label: 'Editar Aviso Emitido', // 👈 Texto corregido con mayúsculas
+          label: 'Editar Aviso Emitido',
         ),
       ];
     } else if (isAdminOrDirector) {
@@ -114,17 +114,18 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
       body: pantallas[_indiceActual],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          color: Color(0xFF0A0F1D),
+          color: Color(0xFF0F120F), // [MODIFICACIÓN]: Color secundario (#0F120F) para el fondo de la barra
           border: Border(top: BorderSide(color: Color(0xFF1E293B), width: 1)),
         ),
         child: NavigationBarTheme(
           data: NavigationBarThemeData(
-            backgroundColor: const Color(0xFF0A0F1D),
-            indicatorColor: const Color(0xFF00D2A0).withOpacity(0.15),
+            backgroundColor: Colors.transparent,
+            // [MODIFICACIÓN]: Reemplazo del color menta anterior por el color primario (#F50E11) con opacidad para el indicador
+            indicatorColor: const Color(0xFFF50E11).withOpacity(0.15),
             labelTextStyle: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
                 return const TextStyle(
-                  color: Color(0xFF00D2A0),
+                  color: Color(0xFFF50E11), // [MODIFICACIÓN]: Texto activo con color primario (#F50E11)
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 );
@@ -133,7 +134,7 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
             }),
             iconTheme: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return const IconThemeData(color: Color(0xFF00D2A0));
+                return const IconThemeData(color: Color(0xFFF50E11)); // [MODIFICACIÓN]: Icono activo con color primario (#F50E11)
               }
               return const IconThemeData(color: Color(0xFF94A3B8));
             }),

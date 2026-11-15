@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart'; 
-import 'servicios/fcm_service.dart'; // 2. Asegúrate de que esta ruta coincida con la ubicación de tu servicio FCM
+import 'servicios/fcm_service.dart';
 import 'pantallas/contenedor_screen.dart';
-import 'firebase_options.dart'; // El archivo generado por la herramienta que importas correctamente
+import 'firebase_options.dart';
 import 'pantallas/login_screen.dart';
 
 void main() async {
@@ -13,10 +13,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   ); 
-
-  // Inicializar FCM (pasando el ID del usuario logueado, por ejemplo, alumno o docente ID = 1)
-  // Aquí puedes llamar a tu servicio una vez que Firebase esté listo:
-  // await FcmService.inicializar(usuarioId: 1); 
 
   runApp(const EduQuestAusenciasApp());
 }
@@ -31,51 +27,52 @@ class EduQuestAusenciasApp extends StatelessWidget {
       title: 'EduQuest - Alerta Temprana',
       theme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0A0F1D),
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA), // Fondo neutral general
         
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF00D2A0),     // Menta institucional
-          secondary: Color(0xFF38BDF8),   // Cian tecnológico
-          surface: Color(0xFF0F1B2E),     // Superficie de tarjetas
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFFF50E11),    // Color primario (#F50E11)
+          secondary: Color(0xFF0F120F),   // Color secundario (#0F120F)
+          tertiary: Color(0xFF0D6EFD),    // Color terciario (#0D6EFD)
+          surface: Colors.white,
           error: Color(0xFFEF4444),
         ),
 
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0A0F1D),
-          foregroundColor: Colors.white,
+          backgroundColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco para AppBar global
+          foregroundColor: Color(0xFF0F120F), // [MODIFICACIÓN]: Texto/íconos oscuros
           elevation: 0,
-          centerTitle: false,
+          centerTitle: true, // [MODIFICACIÓN]: Centrado estándar unificado
           titleTextStyle: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color(0xFF0F120F), // [MODIFICACIÓN]: Texto oscuro legible
             letterSpacing: 0.5,
           ),
+          iconTheme: IconThemeData(color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Íconos oscuros
         ),
 
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: const Color(0xFF132238),
-          labelStyle: const TextStyle(color: Color(0xFF94A3B8)),
-          prefixIconColor: const Color(0xFF38BDF8),
+          fillColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco para campos de texto
+          labelStyle: const TextStyle(color: Color(0xFF64748B)), // [MODIFICACIÓN]: Etiqueta neutral legible
+          prefixIconColor: const Color(0xFF64748B), // [MODIFICACIÓN]: Icono de prefijo neutro
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF1E293B)),
+            borderSide: const BorderSide(color: Color(0xFFCBD5E1)), // [MODIFICACIÓN]: Borde claro neutral
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF1E293B)),
+            borderSide: const BorderSide(color: Color(0xFFCBD5E1)), // [MODIFICACIÓN]: Borde claro habilitado
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF00D2A0), width: 1.5),
+            borderSide: const BorderSide(color: Color(0xFFF50E11), width: 1.5), // [MODIFICACIÓN]: Foco primario (#F50E11)
           ),
         ),
       ),
-      // En tu main.dart:
-      home: LoginScreen(),
-      );
+      home: const LoginScreen(),
+    );
   }
 }

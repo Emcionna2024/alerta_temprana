@@ -164,7 +164,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Aviso emitido, sincronizado y notificado al curso.'),
-            backgroundColor: Color(0xFF00D2A0),
+            backgroundColor: Color.fromARGB(255, 210, 126, 0),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -199,7 +199,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
     if (_isLoadingOptions) {
       return Scaffold(
         appBar: AppBar(title: const Text('Espacio Docente')),
-        body: const Center(child: CircularProgressIndicator(color: Color(0xFF00D2A0))),
+        body: const Center(child: CircularProgressIndicator(color: Color(0xFFF50E11))), // [MODIFICACIÓN]: Color primario (#F50E11)
       );
     }
 
@@ -210,10 +210,10 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: const Color(0xFF00D2A0).withOpacity(0.15),
+                color: const Color(0xFFF50E11).withOpacity(0.15), // [MODIFICACIÓN]: Primario con opacidad
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.school, color: Color(0xFF00D2A0), size: 20),
+              child: const Icon(Icons.school, color: Color(0xFFF50E11), size: 20), // [MODIFICACIÓN]: Ícono primario
             ),
             const SizedBox(width: 12),
             const Column(
@@ -224,13 +224,13 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF00D2A0),
+                    color: Color(0xFFF50E11), // [MODIFICACIÓN]: Texto superior primario
                     letterSpacing: 1.2,
                   ),
                 ),
                 Text(
                   'Emitir Aviso Temprano',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0F120F)), // [MODIFICACIÓN]: Texto secundario oscuro
                 ),
               ],
             ),
@@ -242,23 +242,23 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
+            Container( // Contenedor de datos del docente
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF132238),
+                color: Colors.white, // [MODIFICACIÓN]: Fondo blanco para tarjeta
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF1E293B)),
+                border: Border.all(color: const Color(0xFFCBD5E1)), // [MODIFICACIÓN]: Borde neutral claro
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.person_outline, color: Color(0xFF38BDF8)),
+                  const Icon(Icons.person_outline, color: Color(0xFF0D6EFD)), // [MODIFICACIÓN]: Ícono terciario (#0D6EFD)
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Docente responsable', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                      const Text('Docente responsable', style: TextStyle(color: Color(0xFF64748B), fontSize: 11)), // [MODIFICACIÓN]: Texto auxiliar legible
                       const SizedBox(height: 2),
-                      Text(_nombreDocenteCompleto, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text(_nombreDocenteCompleto, style: const TextStyle(color: Color(0xFF0F120F), fontWeight: FontWeight.bold, fontSize: 14)), // [MODIFICACIÓN]: Texto secundario oscuro
                     ],
                   ),
                 ],
@@ -285,18 +285,18 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                   selectedType = newSelection.first;
                 });
               },
-              style: ButtonStyle(
+              style: ButtonStyle( // SegmentedButton (Inasistencia Total / Llegada Tarde)
                 backgroundColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
-                    return const Color(0xFF00D2A0).withOpacity(0.2);
+                    return const Color(0xFFF50E11).withOpacity(0.15); // [MODIFICACIÓN]: Fondo activo primario suave
                   }
-                  return const Color(0xFF132238);
+                  return Colors.white; // [MODIFICACIÓN]: Fondo inactivo blanco
                 }),
                 foregroundColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
-                    return const Color(0xFF00D2A0);
+                    return const Color(0xFFF50E11); // [MODIFICACIÓN]: Texto activo primario (#F50E11)
                   }
-                  return Colors.grey;
+                  return const Color(0xFF64748B); // [MODIFICACIÓN]: Texto inactivo gris
                 }),
               ),
             ),
@@ -304,7 +304,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
 
             // 1. Dropdown de Materia y Curso
             DropdownButtonFormField<int>(
-              dropdownColor: const Color(0xFF132238),
+              dropdownColor: Colors.white, // [MODIFICACIÓN]: Menú desplegable blanco
               decoration: const InputDecoration(
                 labelText: 'Materia y Curso',
                 prefixIcon: Icon(Icons.menu_book_outlined),
@@ -345,7 +345,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
 
             // 2. Dropdown de Bloque Horario / Día de Cátedra
             DropdownButtonFormField<int>(
-              dropdownColor: const Color(0xFF132238),
+              dropdownColor: Colors.white, // [MODIFICACIÓN]: Menú flotante claro
               decoration: const InputDecoration(
                 labelText: 'Bloque Horario / Día de Cátedra',
                 prefixIcon: Icon(Icons.schedule_outlined),
@@ -375,11 +375,11 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
             const SizedBox(height: 14),
 
             // 3. Botón Calendario Seguro (Abre fluido en Web y Móvil, y valida el día de la cátedra al seleccionar)
-            OutlinedButton.icon(
+            OutlinedButton.icon( // Calendario y Hora Estimada
               style: OutlinedButton.styleFrom(
-                backgroundColor: const Color(0xFF132238),
+                backgroundColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco
                 side: BorderSide(
-                  color: selectedScheduleId != null ? const Color(0xFF00D2A0) : const Color(0xFF1E293B),
+                  color: selectedScheduleId != null ? const Color(0xFFF50E11) : const Color(0xFFCBD5E1), // [MODIFICACIÓN]: Borde activo primario (#F50E11)
                   width: 1.5,
                 ),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -422,14 +422,15 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                   }
                 }
               },
-              icon: const Icon(Icons.calendar_month_outlined, size: 20, color: Color(0xFF00D2A0)),
+              // Asegurar color de iconos y textos internos a tonos oscuros/primarios:
+              icon: const Icon(Icons.calendar_month_outlined, size: 20, color: Color(0xFFF50E11)), // [MODIFICACIÓN]: Ícono primario
               label: Text(
                 selectedDate == null
                     ? (selectedScheduleId == null 
                         ? 'Primero seleccione un bloque horario' 
                         : 'Seleccionar Fecha en el Calendario')
                     : 'Fecha de clase: ${selectedDate!.day.toString().padLeft(2, '0')}/${selectedDate!.month.toString().padLeft(2, '0')}/${selectedDate!.year}',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13.5),
+                style: const TextStyle(color: Color(0xFF0F120F), fontWeight: FontWeight.bold, fontSize: 13.5), // [MODIFICACIÓN]: Texto secundario oscuro
               ),
             ),
             const SizedBox(height: 14),
@@ -438,8 +439,8 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
             if (selectedType == 'LATE_ARRIVAL') ...[
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
-                  backgroundColor: const Color(0xFF132238),
-                  side: const BorderSide(color: Color(0xFF00D2A0), width: 1.5),
+                  backgroundColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco para modo claro
+                  side: const BorderSide(color: Color(0xFFF50E11), width: 1.5), // [MODIFICACIÓN]: Borde primario (#F50E11)
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                 ),
@@ -478,26 +479,27 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                     }
                   }
                 },
-                icon: const Icon(Icons.alarm_add_rounded, size: 20, color: Color(0xFF00D2A0)),
+                icon: const Icon(Icons.alarm_add_rounded, size: 20, color: Color(0xFFF50E11)), // [MODIFICACIÓN]: Ícono primario (#F50E11)
                 label: Text(
                   selectedArrivalTime == null
                       ? 'Seleccionar Hora Estimada de Llegada'
                       : 'Llegada estimada a las: ${selectedArrivalTime!.hour.toString().padLeft(2, '0')}:${selectedArrivalTime!.minute.toString().padLeft(2, '0')} hs',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13.5),
+                  style: const TextStyle(color: Color(0xFF0F120F), fontWeight: FontWeight.bold, fontSize: 13.5), // [MODIFICACIÓN]: Texto secundario oscuro legible
                 ),
               ),
               const SizedBox(height: 14),
             ],
 
-            Container(
+            // Contenedor de Mensaje Preescrito Oficial
+            Container( 
               padding: const EdgeInsets.all(18.0),
               decoration: BoxDecoration(
-                color: const Color(0xFF0F1B2E),
+                color: Colors.white, // [MODIFICACIÓN]: Fondo blanco
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: _formularioValido
-                      ? const Color(0xFFF59E0B).withOpacity(0.5)
-                      : const Color(0xFF1E293B),
+                      ? const Color(0xFFF50E11).withOpacity(0.5) // [MODIFICACIÓN]: Borde primario cuando es válido
+                      : const Color(0xFFCBD5E1),
                   width: 1.5,
                 ),
               ),
@@ -509,7 +511,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFF59E0B),
+                      color: Color(0xFFF50E11), // [MODIFICACIÓN]: Título primario (#F50E11)
                       letterSpacing: 1.2,
                     ),
                   ),
@@ -517,7 +519,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                   Text(
                     _generarTextoMensaje(),
                     style: TextStyle(
-                      color: _formularioValido ? const Color(0xFFE2E8F0) : const Color(0xFF64748B),
+                      color: _formularioValido ? const Color(0xFF0F120F) : const Color(0xFF64748B), // [MODIFICACIÓN]: Contraste claro optimizado
                       fontSize: 13.5,
                       height: 1.5,
                     ),
@@ -527,19 +529,20 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
             ),
             const SizedBox(height: 24),
 
-            ElevatedButton.icon(
+            // Botón Principal de Envío (ElevatedButton)  
+            ElevatedButton.icon( 
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00D2A0),
-                foregroundColor: const Color(0xFF0A0F1D),
+                backgroundColor: const Color(0xFFF50E11), // [MODIFICACIÓN]: Fondo primario (#F50E11)
+                foregroundColor: Colors.white, // [MODIFICACIÓN]: Texto blanco
                 elevation: 0,
-                disabledBackgroundColor: const Color(0xFF1E293B),
-                disabledForegroundColor: const Color(0xFF475569),
+                disabledBackgroundColor: const Color(0xFFE2E8F0), // [MODIFICACIÓN]: Deshabilitado neutro claro
+                disabledForegroundColor: const Color(0xFF94A3B8),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: (_formularioValido && !_isLoading) ? _publicarAusenciaEnBackend : null,
               icon: _isLoading 
-                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0A0F1D)))
+                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) // [MODIFICACIÓN]: Spinner blanco sobre botón rojo
                 : const Icon(Icons.send_rounded, size: 18),
               label: Text(
                 _isLoading ? 'Enviando al sistema...' : 'Emitir Aviso Temprano',
