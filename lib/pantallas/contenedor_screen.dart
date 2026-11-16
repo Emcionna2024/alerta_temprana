@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // [MODIFICACIÓN]: Requerido para limpiar credenciales al cerrar sesión
+import 'login_screen.dart'; // [MODIFICACIÓN]: Importación para redirigir tras el cierre de sesión
 import 'docente_emision_screen.dart';
 import 'docente_historial_screen.dart';
 import 'docente_gestion_screen.dart';
@@ -23,15 +25,28 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
 
   final GlobalKey<State<DocenteHistorialScreen>> _historialKey = GlobalKey<State<DocenteHistorialScreen>>();
 
+  // [MODIFICACIÓN]: Método para limpiar la sesión local y restablecer la pila de navegación
+  Future<void> _cerrarSesion(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Elimina tokens y datos de sesión persistidos
+
+    if (!context.mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false, // Elimina todas las pantallas previas del historial
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userData = widget.usuarioLogueado;
     
     final bool isStudent = userData['studentProfile'] != null || 
-                           (userData['roles'] != null && (userData['roles'] as List).contains('STUDENT'));
+                         (userData['roles'] != null && (userData['roles'] as List).contains('STUDENT'));
     
     final bool isTeacher = userData['teacherProfile'] != null || 
-                           (userData['roles'] != null && (userData['roles'] as List).contains('TEACHER'));
+                         (userData['roles'] != null && (userData['roles'] as List).contains('TEACHER'));
 
     final bool isAdminOrDirector = (userData['roles'] != null && 
         ((userData['roles'] as List).contains('ADMIN') || 
@@ -111,6 +126,17 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Panel Institucional'),
+        actions: [
+          // [MODIFICACIÓN]: Botón de cierre de sesión corporativo en la AppBar
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar Sesión',
+            onPressed: () => _cerrarSesion(context),
+          ),
+        ],
+      ),
       body: pantallas[_indiceActual],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
@@ -120,7 +146,7 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
         child: NavigationBarTheme(
           data: NavigationBarThemeData(
             backgroundColor: Colors.transparent,
-            // [MODIFICACIÓN]: Reemplazo del color menta anterior por el color primario (#F50E11) con opacidad para el indicador
+            // [MODIFICACIÓN]: Reemplazo del color anterior por el color primario (#F50E11) con opacidad para el indicador
             indicatorColor: const Color(0xFFF50E11).withOpacity(0.15),
             labelTextStyle: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
