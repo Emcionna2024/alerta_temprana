@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // [MODIFICACIÓN]: Obligatorio para traducir widgets nativos de Flutter (calendarios, diálogos, etc.)
 import 'pantallas/login_screen.dart';
+import 'pantallas/splash_screen.dart'; // Ajusta la ruta si se encuentra en otra carpeta
 
 void main() {
   runApp(const AlertaTempranaApp());
@@ -47,7 +48,9 @@ class AlertaTempranaApp extends StatelessWidget {
         ),
       ),
       
-      home: const LoginScreen(),
+      home: const SplashScreen(),
+      // home: const LoginScreen(),
+      
     );
   }
 }

@@ -374,7 +374,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
             ),
             const SizedBox(height: 14),
 
-            // 3. Botón Calendario Seguro (Abre fluido en Web y Móvil, y valida el día de la cátedra al seleccionar)
+            // 3. Botón Calendario Seguro (Abre fluido en Web y Móvil, y restringe días mediante selectableDayPredicate)
             OutlinedButton.icon( // Calendario y Hora Estimada
               style: OutlinedButton.styleFrom(
                 backgroundColor: Colors.white, // [MODIFICACIÓN]: Fondo blanco
@@ -394,33 +394,35 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                 final diaCatedra = schSeleccionado?['day'] ?? 'clase';
                 final int? targetWeekday = _obtenerWeekdayDesdeTexto(diaCatedra);
 
+                // 🛡️ Calcular una fecha inicial válida que cumpla con el predicado
+                DateTime initialDate = DateTime.now();
+                if (targetWeekday != null) {
+                  while (initialDate.weekday != targetWeekday) {
+                    initialDate = initialDate.add(const Duration(days: 1));
+                  }
+                }
+
                 // Calendario estándar fluido sin bloqueos de renderizado web
                 final picked = await showDatePicker(
                   context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now().subtract(const Duration(days: 30)),
-                  lastDate: DateTime.now().add(const Duration(days: 60)),
+                  initialDate: initialDate,
+                  firstDate: DateTime.now(), // [MODIFICACIÓN]: Desde hoy en adelante
+                  lastDate: DateTime.now().add(const Duration(days: 90)),
                   helpText: 'Seleccione fecha de clase ($diaCatedra)',
                   confirmText: 'CONFIRMAR',
                   cancelText: 'CANCELAR',
                   locale: const Locale('es', 'ES'), // [MODIFICACIÓN]: Fuerza el calendario nativo en español (meses, días y cabecera)
+                  selectableDayPredicate: (DateTime day) {
+                    // [MODIFICACIÓN]: Restringe la selección exclusivamente a los días de la semana correspondientes a la cátedra
+                    if (targetWeekday == null) return true;
+                    return day.weekday == targetWeekday;
+                  },
                 );
 
                 if (picked != null) {
-                  // 🛡️ Validación posterior post-selección para asegurar que sea el día correcto de la cátedra
-                  if (targetWeekday != null && picked.weekday != targetWeekday) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('La fecha seleccionada no corresponde a un día $diaCatedra. Por favor elija un día válido.'),
-                        backgroundColor: Colors.redAccent,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  } else {
-                    setState(() {
-                      selectedDate = picked;
-                    });
-                  }
+                  setState(() {
+                    selectedDate = picked;
+                  });
                 }
               },
               // Asegurar color de iconos y textos internos a tonos oscuros/primarios:
