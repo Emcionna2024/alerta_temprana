@@ -150,10 +150,10 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
           'reason': _generarTextoMensaje(),
           'classDate': selectedDate?.toIso8601String().split('T')[0],
           'teacherSubjectId': selectedSubjectId,
-          'courseId': selectedCourseId,          
-          'scheduleId': selectedScheduleId,      
+          'courseId': selectedCourseId,         
+          'scheduleId': selectedScheduleId,     
           'estimatedArrivalTime': selectedType == 'LATE_ARRIVAL' && selectedArrivalTime != null
-           ? '${selectedArrivalTime!.hour.toString().padLeft(2, '0')}:${selectedArrivalTime!.minute.toString().padLeft(2, '0管理局'.substring(0, 5))}' // formato seguro HH:mm
+           ? '${selectedArrivalTime!.hour.toString().padLeft(2, '0')}:${selectedArrivalTime!.minute.toString().padLeft(2, '0')}'
            : null,
         }),
       );
@@ -403,6 +403,7 @@ class _DocenteEmisionScreenState extends State<DocenteEmisionScreen> {
                   helpText: 'Seleccione fecha de clase ($diaCatedra)',
                   confirmText: 'CONFIRMAR',
                   cancelText: 'CANCELAR',
+                  locale: const Locale('es', 'ES'), // [MODIFICACIÓN]: Fuerza el calendario nativo en español (meses, días y cabecera)
                 );
 
                 if (picked != null) {
