@@ -5,6 +5,7 @@ import 'docente_emision_screen.dart';
 import 'docente_historial_screen.dart';
 import 'docente_gestion_screen.dart';
 import 'estudiante_screen.dart';
+import 'dashboard_screen.dart'; // [MODIFICACIÓN]: Importación del nuevo Dashboard / Action Hub
 
 class ContenedorScreen extends StatefulWidget {
   final Map<String, dynamic> usuarioLogueado;
@@ -58,9 +59,18 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
 
     if (isTeacher && !isAdminOrDirector) {
       pantallas = [
+        // [MODIFICACIÓN]: Dashboard integrado en el índice 0 como centro de accesos directos
+        DashboardScreen(
+          usuarioLogueado: widget.usuarioLogueado, 
+          tokenJwt: widget.tokenJwt,
+          onIrAEmission: () => setState(() => _indiceActual = 1),
+          onIrAHistorial: () => setState(() => _indiceActual = 2),
+          onIrAGestion: () => setState(() => _indiceActual = 3),
+        ),
         DocenteEmisionScreen(
           onAvisoPublicado: () {
-            setState(() => _indiceActual = 1);
+            // [MODIFICACIÓN]: Redirige al historial (índice 2) tras publicar
+            setState(() => _indiceActual = 2);
             
             final historialState = _historialKey.currentState;
             if (historialState != null) {
@@ -81,7 +91,13 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
         ),
       ];
 
+      // [MODIFICACIÓN]: 4 destinos sincronizados con las pantallas del rol docente
       destinos = const [
+        NavigationDestination(
+          icon: Icon(Icons.dashboard_outlined),
+          selectedIcon: Icon(Icons.dashboard),
+          label: 'Dashboard',
+        ),
         NavigationDestination(
           icon: Icon(Icons.edit_calendar_outlined),
           selectedIcon: Icon(Icons.edit_calendar),
@@ -128,6 +144,14 @@ class _ContenedorScreenState extends State<ContenedorScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Panel Institucional'),
+        // [MODIFICACIÓN]: Botón de retroceso condicional en el AppBar para retornar al Dashboard (índice 0)
+        leading: _indiceActual > 0
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                tooltip: 'Volver al Dashboard',
+                onPressed: () => setState(() => _indiceActual = 0),
+              )
+            : null,
         actions: [
           // [MODIFICACIÓN]: Botón de cierre de sesión corporativo en la AppBar
           IconButton(
